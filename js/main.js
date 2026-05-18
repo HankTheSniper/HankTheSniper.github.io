@@ -1,238 +1,268 @@
 // ==========================================
-// Personal Homepage - Main JavaScript
+// Animation Timeline Engine
+// PPT-based single-page intro animation
 // ==========================================
 
-document.addEventListener('DOMContentLoaded', () => {
-    initNavbar();
-    initScrollAnimations();
-    initMobileMenu();
-    initContactForm();
-    initStatCounter();
-});
+(function() {
+    'use strict';
 
-// --- Navbar scroll effect ---
-function initNavbar() {
-    const navbar = document.querySelector('.navbar');
-    const sections = document.querySelectorAll('section[id]');
-    const navLinks = document.querySelectorAll('.nav-link');
+    // --- Easing: ease-out quart (fast start, gentle stop) ---
+    function easeOutQuart(t) {
+        return 1 - Math.pow(1 - t, 4);
+    }
+    function easeOutCubic(t) {
+        return 1 - Math.pow(1 - t, 3);
+    }
 
-    window.addEventListener('scroll', () => {
-        // Navbar background
-        if (window.scrollY > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
+    // --- DOM refs ---
+    const scene = document.getElementById('scene');
+    const sweepLine = document.getElementById('sweepLine');
+    const portrait = document.querySelector('.portrait');
+    const heroBanner = document.querySelector('.hero-banner');
+    const nameBg = document.querySelector('.name-bg');
+    const nameBlock = document.querySelector('.name-block');
+    const education = document.querySelector('.education');
+    const contactBar = document.querySelector('.contact-bar');
+    const overlayNl = document.querySelector('.overlay-nl');
+    const labelChips = document.querySelectorAll('.label-chip');
+    const skillTags = document.querySelectorAll('.skill-tag');
 
-        // Active nav link
-        let current = '';
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop - 100;
-            if (window.scrollY >= sectionTop) {
-                current = section.getAttribute('id');
-            }
-        });
+    // --- Sweep line geometry (parallelogram right-edge angle) ---
+    // Parallelogram right edge: top x=94.6%, bottom x=91.8%
+    // The sweep line follows this angle
+    const sweepX1 = 94.6;  // top point x (%)
+    const sweepX2 = 91.8;  // bottom point x (%)
+    const sweepLen = 25;   // line length as % of scene height
 
-        navLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href') === '#' + current) {
-                link.classList.add('active');
-            }
-        });
+    // --- Skill tag Y positions (for sweep detection) ---
+    // Skill sidebar spans top 34.7% to 99.7% (34.7+65)
+    // Tags are evenly spaced within
+    const skillSidebarTop = 34.7;
+    const skillSidebarH = 65;
+    const tagCount = skillTags.length;
+    const tagPositions = Array.from(skillTags).map((_, i) => {
+        return skillSidebarTop + (skillSidebarH / (tagCount + 1)) * (i + 1);
     });
-}
 
-// --- Scroll-triggered animations ---
-function initScrollAnimations() {
-    const observerOptions = {
-        threshold: 0.15,
-        rootMargin: '0px 0px -50px 0px'
+    // --- Animation timing (milliseconds) ---
+    const TIMING = {
+        sweepStart:    0,
+        sweepEnd:      700,
+        portraitStart: 0,
+        portraitEnd:   700,
+        heroStart:     0,
+        heroEnd:       600,
+        labelStart:    80,
+        labelEnd:      650,
+        nameStart:     80,
+        nameEnd:       650,
+        contactStart:  80,
+        contactEnd:    650,
+        eduStart:      750,
+        eduEnd:        950,
+        nlStart:       900,
+        nlEnd:         1500,
     };
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
+    // --- State ---
+    let animFrameId = null;
+    let startTime = null;
+    let sweepTriggered = new Array(tagCount).fill(false);
+
+    // --- Main animation loop ---
+    function animate(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const elapsed = timestamp - startTime;
+
+        // === Phase 1: Sweep + all elements enter ===
+        updateSweep(elapsed);
+        updatePortrait(elapsed);
+        updateHero(elapsed);
+        updateLabels(elapsed);
+        updateName(elapsed);
+        updateContact(elapsed);
+
+        // === Phase 2: Education fade in ===
+        updateEducation(elapsed);
+
+        // === Phase 3: nl.png fade in ===
+        updateNl(elapsed);
+
+        // Continue until all phases complete
+        if (elapsed < TIMING.nlEnd + 200) {
+            animFrameId = requestAnimationFrame(animate);
+        } else {
+            // Final cleanup: ensure everything is visible
+            ensureAllVisible();
+        }
+    }
+
+    // --- Phase 1a: Diagonal sweep line ---
+    function updateSweep(elapsed) {
+        if (elapsed < TIMING.sweepStart || elapsed > TIMING.sweepEnd + 100) {
+            if (elapsed > TIMING.sweepEnd) sweepLine.setAttribute('opacity', '0');
+            return;
+        }
+
+        const raw = Math.max(0, Math.min(1, (elapsed - TIMING.sweepStart) / (TIMING.sweepEnd - TIMING.sweepStart)));
+        const progress = easeOutQuart(raw);
+
+        // Update line position
+        const yStart = -5 + progress * 110;  // above screen to below
+        sweepLine.setAttribute('x1', sweepX1);
+        sweepLine.setAttribute('y1', yStart);
+        sweepLine.setAttribute('x2', sweepX2);
+        sweepLine.setAttribute('y2', yStart + sweepLen);
+        sweepLine.setAttribute('opacity', '1');
+
+        // Detect which skill tags the line has passed
+        const sweepCenter = yStart + sweepLen / 2;
+        for (let i = 0; i < tagCount; i++) {
+            if (!sweepTriggered[i] && sweepCenter >= tagPositions[i]) {
+                sweepTriggered[i] = true;
+                skillTags[i].classList.add('revealed');
             }
-        });
-    }, observerOptions);
-
-    // Observe skill fills
-    document.querySelectorAll('.skill-fill').forEach(el => {
-        el.style.width = '0';
-        observer.observe(el);
-    });
-
-    // Observe project cards
-    document.querySelectorAll('.project-card').forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
-    });
-
-    // Observe timeline items
-    document.querySelectorAll('.timeline-item').forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateX(-20px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
-    });
-
-    // Observe stat cards
-    document.querySelectorAll('.stat-card').forEach((el, i) => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = `opacity 0.5s ${i * 0.1}s ease, transform 0.5s ${i * 0.1}s ease`;
-        observer.observe(el);
-    });
-}
-
-// Add CSS rules for visible class
-const style = document.createElement('style');
-style.textContent = `
-    .skill-fill.visible { width: var(--target-width) !important; }
-    .project-card.visible { opacity: 1 !important; transform: translateY(0) !important; }
-    .timeline-item.visible { opacity: 1 !important; transform: translateX(0) !important; }
-    .stat-card.visible { opacity: 1 !important; transform: translateY(0) !important; }
-`;
-document.head.appendChild(style);
-
-// Store target widths for skill bars
-document.querySelectorAll('.skill-fill').forEach(el => {
-    const targetWidth = el.style.width;
-    el.style.setProperty('--target-width', targetWidth);
-});
-
-// --- Mobile menu ---
-function initMobileMenu() {
-    const toggle = document.querySelector('.nav-toggle');
-    const navLinks = document.querySelector('.nav-links');
-    const links = document.querySelectorAll('.nav-link');
-
-    toggle.addEventListener('click', () => {
-        navLinks.classList.toggle('active');
-        toggle.classList.toggle('active');
-    });
-
-    links.forEach(link => {
-        link.addEventListener('click', () => {
-            navLinks.classList.remove('active');
-            toggle.classList.remove('active');
-        });
-    });
-}
-
-// --- Contact form ---
-function initContactForm() {
-    const form = document.getElementById('contactForm');
-
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        const name = document.getElementById('name').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const message = document.getElementById('message').value.trim();
-
-        if (!name || !email || !message) {
-            showFormMessage('请填写所有字段', 'error');
-            return;
         }
+    }
 
-        if (!isValidEmail(email)) {
-            showFormMessage('请输入有效的邮箱地址', 'error');
-            return;
+    // --- Phase 1b: Portrait slides in from left ---
+    function updatePortrait(elapsed) {
+        if (elapsed < TIMING.portraitStart) return;
+        const raw = Math.max(0, Math.min(1, (elapsed - TIMING.portraitStart) / (TIMING.portraitEnd - TIMING.portraitStart)));
+        const progress = easeOutQuart(raw);
+
+        if (progress > 0 && !portrait.classList.contains('visible')) {
+            portrait.classList.add('visible');
         }
+    }
 
-        // Prepare mailto link as fallback since this is static hosting
-        const mailtoLink = `mailto:zhq.game.design@gmail.com?subject=来自 ${encodeURIComponent(name)} 的留言&body=${encodeURIComponent('姓名: ' + name + '\n邮箱: ' + email + '\n\n留言:\n' + message)}`;
+    // --- Phase 1c: Hero banner (arrow + text) leads ---
+    function updateHero(elapsed) {
+        if (elapsed < TIMING.heroStart) return;
+        const raw = Math.max(0, Math.min(1, (elapsed - TIMING.heroStart) / (TIMING.heroEnd - TIMING.heroStart)));
+        const progress = easeOutQuart(raw);
 
-        showFormMessage('正在打开邮件客户端...', 'success');
-        setTimeout(() => {
-            window.open(mailtoLink, '_blank');
-        }, 500);
+        if (progress > 0 && !heroBanner.classList.contains('visible')) {
+            heroBanner.classList.add('visible');
+        }
+    }
 
-        form.reset();
-    });
-}
+    // --- Phase 1d: All label chips enter together ---
+    function updateLabels(elapsed) {
+        if (elapsed < TIMING.labelStart) return;
+        const raw = Math.max(0, Math.min(1, (elapsed - TIMING.labelStart) / (TIMING.labelEnd - TIMING.labelStart)));
+        const progress = easeOutQuart(raw);
 
-function showFormMessage(msg, type) {
-    const existing = document.querySelector('.form-message');
-    if (existing) existing.remove();
-
-    const div = document.createElement('div');
-    div.className = 'form-message';
-    div.textContent = msg;
-    div.style.cssText = `
-        margin-top: 12px;
-        padding: 10px 16px;
-        border-radius: 8px;
-        font-size: 0.85rem;
-        text-align: center;
-        background: ${type === 'success' ? 'rgba(0, 255, 100, 0.1)' : 'rgba(255, 80, 80, 0.1)'};
-        color: ${type === 'success' ? '#00ff64' : '#ff5050'};
-        border: 1px solid ${type === 'success' ? 'rgba(0, 255, 100, 0.2)' : 'rgba(255, 80, 80, 0.2)'};
-    `;
-    document.getElementById('contactForm').appendChild(div);
-
-    setTimeout(() => div.remove(), 4000);
-}
-
-function isValidEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-// --- Animated stat counter ---
-function initStatCounter() {
-    const statNumbers = document.querySelectorAll('.stat-number');
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const el = entry.target;
-                const target = parseInt(el.getAttribute('data-count'));
-                const duration = 1500;
-                const startTime = performance.now();
-
-                function update(currentTime) {
-                    const elapsed = currentTime - startTime;
-                    const progress = Math.min(elapsed / duration, 1);
-                    // Ease out cubic
-                    const eased = 1 - Math.pow(1 - progress, 3);
-                    el.textContent = Math.floor(eased * target);
-                    if (progress < 1) {
-                        requestAnimationFrame(update);
-                    } else {
-                        el.textContent = target + '+';
-                    }
+        if (progress > 0.05) {
+            labelChips.forEach(function(chip) {
+                if (!chip.classList.contains('visible')) {
+                    chip.classList.add('visible');
                 }
+            });
+        }
+    }
 
-                requestAnimationFrame(update);
-                observer.unobserve(el);
+    // --- Phase 1e: Name block + bg enter ---
+    function updateName(elapsed) {
+        if (elapsed < TIMING.nameStart) return;
+        const raw = Math.max(0, Math.min(1, (elapsed - TIMING.nameStart) / (TIMING.nameEnd - TIMING.nameStart)));
+        const progress = easeOutQuart(raw);
+
+        if (progress > 0.08) {
+            if (!nameBg.classList.contains('visible')) nameBg.classList.add('visible');
+            if (!nameBlock.classList.contains('visible')) nameBlock.classList.add('visible');
+        }
+    }
+
+    // --- Phase 1f: Contact bar ---
+    function updateContact(elapsed) {
+        if (elapsed < TIMING.contactStart) return;
+        const raw = Math.max(0, Math.min(1, (elapsed - TIMING.contactStart) / (TIMING.contactEnd - TIMING.contactStart)));
+        const progress = easeOutQuart(raw);
+
+        if (progress > 0.1 && !contactBar.classList.contains('visible')) {
+            contactBar.classList.add('visible');
+        }
+    }
+
+    // --- Phase 2: Education fades in (after name settles) ---
+    function updateEducation(elapsed) {
+        if (elapsed < TIMING.eduStart) return;
+        const raw = Math.max(0, Math.min(1, (elapsed - TIMING.eduStart) / (TIMING.eduEnd - TIMING.eduStart)));
+        const progress = easeOutCubic(raw);
+
+        if (progress > 0 && !education.classList.contains('visible')) {
+            education.classList.add('visible');
+        }
+    }
+
+    // --- Phase 3: nl.png gradually appears ---
+    function updateNl(elapsed) {
+        if (elapsed < TIMING.nlStart) return;
+        const raw = Math.max(0, Math.min(1, (elapsed - TIMING.nlStart) / (TIMING.nlEnd - TIMING.nlStart)));
+        const progress = easeOutCubic(raw);
+
+        if (progress > 0 && !overlayNl.classList.contains('visible')) {
+            overlayNl.classList.add('visible');
+        }
+    }
+
+    // --- Ensure all elements visible at end ---
+    function ensureAllVisible() {
+        var allAnimated = document.querySelectorAll('[data-anim], .skill-tag');
+        allAnimated.forEach(function(el) {
+            if (el.classList.contains('skill-tag')) {
+                el.classList.add('revealed');
+            } else {
+                el.classList.add('visible');
             }
         });
-    }, { threshold: 0.5 });
+        portrait.classList.add('visible');
+        heroBanner.classList.add('visible');
+        nameBg.classList.add('visible');
+        nameBlock.classList.add('visible');
+        education.classList.add('visible');
+        contactBar.classList.add('visible');
+        overlayNl.classList.add('visible');
+        sweepLine.setAttribute('opacity', '0');
+    }
 
-    statNumbers.forEach(el => observer.observe(el));
-}
+    // --- Start animation on load ---
+    function startAnimation() {
+        // Small delay so the browser has rendered the initial layout
+        setTimeout(function() {
+            startTime = null;
+            sweepTriggered = new Array(tagCount).fill(false);
+            animFrameId = requestAnimationFrame(animate);
+        }, 200);
+    }
 
-// --- Smooth parallax for hero particles ---
-document.addEventListener('mousemove', (e) => {
-    const hero = document.querySelector('.hero');
-    if (!hero) return;
+    // --- Initialize ---
+    function init() {
+        // Ensure all elements start hidden
+        // CSS handles initial state, but double-check
+        portrait.classList.remove('visible');
+        heroBanner.classList.remove('visible');
+        nameBg.classList.remove('visible');
+        nameBlock.classList.remove('visible');
+        education.classList.remove('visible');
+        contactBar.classList.remove('visible');
+        overlayNl.classList.remove('visible');
 
-    const rect = hero.getBoundingClientRect();
-    if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+        labelChips.forEach(function(el) { el.classList.remove('visible'); });
+        skillTags.forEach(function(el) { el.classList.remove('revealed'); });
 
-    const x = (e.clientX - rect.left) / rect.width;
-    const y = (e.clientY - rect.top) / rect.height;
+        sweepLine.setAttribute('opacity', '0');
+        sweepTriggered = new Array(tagCount).fill(false);
 
-    const icons = document.querySelectorAll('.floating-icon');
-    icons.forEach((icon, i) => {
-        const factor = (i + 1) * 15;
-        const moveX = (x - 0.5) * factor;
-        const moveY = (y - 0.5) * factor;
-        icon.style.transform = `translate(${moveX}px, ${moveY}px)`;
-    });
-});
+        startAnimation();
+    }
+
+    // --- Run on DOM ready ---
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+
+})();
