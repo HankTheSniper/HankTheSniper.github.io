@@ -7,114 +7,325 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+SC:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- 主场景容器 — 16:9 比例 -->
-    <div class="scene" id="scene">
 
-        <!-- ======== 背景层 ======== -->
-        <!-- 右侧深色平行四边形 -->
-        <div class="bg-parallelogram"></div>
+<!-- Navigation -->
+<nav class="nav" id="nav">
+    <div class="nav__inner">
+        <a href="#hero" class="nav__logo">
+            <span class="nav__dot nav__dot--red"></span>
+            <span class="nav__dot nav__dot--blue"></span>
+            <span class="nav__dot nav__dot--yellow"></span>
+            <span class="nav__name">Hank Zhao</span>
+        </a>
+        <ul class="nav__links">
+            <li><a href="#projects">项目</a></li>
+            <li><a href="#games">游戏经历</a></li>
+            <li><a href="#security">信息安全</a></li>
+            <li><a href="#contact">联系</a></li>
+        </ul>
+    </div>
+</nav>
 
-        <!-- ======== 人物照片层 ======== -->
-        <img class="portrait" src="assets/me.png" alt="赵汉卿">
-
-        <!-- ======== 左上角"热爱"标签 ======== -->
-        <div class="label-chip label-passion" data-anim="left">
-            <span>热爱</span>
-        </div>
-
-        <!-- ======== 右侧技能标签列（斜线扫过时浮现） ======== -->
-        <div class="skill-sidebar">
-            <span class="skill-tag" data-sweep="1">玩法</span>
-            <span class="skill-tag" data-sweep="2">文案</span>
-            <span class="skill-tag" data-sweep="3">美术</span>
-            <span class="skill-tag" data-sweep="4">开发</span>
-            <span class="skill-tag" data-sweep="5">智能体</span>
-            <span class="skill-tag" data-sweep="6">信息安全</span>
-        </div>
-
-        <!-- ======== 中部：箭头 + "游戏策划"（领头） ======== -->
-        <div class="hero-banner" data-anim="left">
-            <div class="hero-arrow">
-                <svg viewBox="0 0 800 200" preserveAspectRatio="none">
-                    <defs>
-                        <linearGradient id="arrowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stop-color="#D52B1E" stop-opacity="0.3"/>
-                            <stop offset="100%" stop-color="#D52B1E" stop-opacity="1"/>
-                        </linearGradient>
-                    </defs>
-                    <polygon points="0,0 800,0 800,200 40,200 0,100" fill="url(#arrowGrad)"/>
-                </svg>
-            </div>
-            <div class="hero-text">游戏策划</div>
-        </div>
-
-        <!-- ======== 名字方块背景（深色底） ======== -->
-        <div class="name-bg" data-anim="up"></div>
-
-        <!-- ======== 名字文字 ======== -->
-        <div class="name-block" data-anim="up">
-            <span class="name-text">赵汉卿</span>
-        </div>
-
-        <!-- ======== 教育信息 ======== -->
-        <div class="education" data-anim="fade">
-            <span>济南大学 | 计科 | 硕士</span>
-        </div>
-
-        <!-- ======== 各标签组（方块+文字一体） ======== -->
-        <div class="label-chip label-competition" data-anim="left">
-            <span>参赛经验</span>
-        </div>
-
-        <div class="label-chip label-org" data-anim="right">
-            <span>组织、协调、沟通</span>
-        </div>
-
-        <div class="label-chip label-analysis" data-anim="left">
-            <span>游戏理解与分析</span>
-        </div>
-
-        <div class="label-chip label-code" data-anim="left">
-            <span>代码能力</span>
-        </div>
-
-        <div class="label-chip label-art" data-anim="right">
-            <span>绘画与审美</span>
-        </div>
-
-        <div class="label-chip label-humanities" data-anim="up">
-            <span>历史、文学、哲学</span>
-        </div>
-
-        <div class="label-chip label-tools" data-anim="right">
-            <span>熟练使用脑图、流程图</span>
-            <span>、Office、Github等工具</span>
-        </div>
-
-        <!-- ======== 联系方式 ======== -->
-        <div class="contact-bar" data-anim="up">
-            <span>Email: hankzhao1999@163.com</span>
-            <span class="contact-sep">|</span>
-            <span>Tel: 15833356058</span>
-        </div>
-
-        <!-- ======== SVG 斜线扫掠层 ======== -->
-        <svg class="sweep-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <line id="sweepLine"
-                  x1="82" y1="0" x2="100" y2="0"
-                  stroke="#D52B1E"
-                  stroke-width="0.15"
-                  opacity="0"/>
-        </svg>
-
-        <!-- ======== 最终浮现图片 ======== -->
-        <img class="overlay-nl" src="assets/nl.png" alt="" data-anim="fade" data-final="true">
-
+<!-- Hero Section -->
+<section id="hero" class="hero">
+    <!-- Bold foreground geometric collisions -->
+    <div class="hero__geo">
+        <div class="geo-block geo-block--a"></div>
+        <div class="geo-block geo-block--b"></div>
+        <div class="geo-block geo-block--c"></div>
+        <div class="geo-block geo-block--d"></div>
     </div>
 
-    <script src="js/main.js"></script>
+    <div class="hero__grid">
+        <div class="hero__portrait-col">
+            <div class="hero__frame">
+                <img src="src/cv/pic_new.png" alt="赵汉卿">
+            </div>
+        </div>
+
+        <div class="hero__text">
+            <h1 class="hero__name">赵汉卿</h1>
+            <p class="hero__role">Game Designer</p>
+            <div class="hero__tags">
+                <span class="tag tag--red">玩法</span>
+                <span class="tag tag--blue">文案</span>
+                <span class="tag tag--yellow">美术</span>
+                <span class="tag tag--red">开发</span>
+                <span class="tag tag--blue">智能体</span>
+                <span class="tag tag--yellow">信息安全</span>
+            </div>
+            <div class="hero__contact">
+                <a href="mailto:hankzhao1999@163.com">
+                    <span class="hero__contact-icon">@</span>hankzhao1999@163.com
+                </a>
+                <a href="tel:15833356058">
+                    <span class="hero__contact-icon">&#9742;</span>15833356058
+                </a>
+            </div>
+
+            <!-- Downloads inline -->
+            <div class="hero__dls">
+                <a href="src/cv/策划与开发作品集.pptx" download class="dl-chip">
+                    <span class="dl-chip__icon dl-chip__icon--ppt">PPT</span>
+                    <span class="dl-chip__text">策划与开发作品集</span>
+                    <span class="dl-chip__arrow">&#8595;</span>
+                </a>
+                <a href="ref/赵汉卿_游戏策划_个人简历.pdf" target="_blank" class="dl-chip">
+                    <span class="dl-chip__icon dl-chip__icon--pdf">PDF</span>
+                    <span class="dl-chip__text">游戏策划 · 个人简历</span>
+                    <span class="dl-chip__arrow">&#8595;</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero__edu">济南大学 | 计算机科学与技术 | 硕士</div>
+</section>
+
+<!-- Project Experience Section -->
+<section id="projects" class="projects">
+    <h2 class="sec-title">策划与开发经验</h2>
+
+    <div class="projects__grid">
+
+        <!-- AiColossuem -->
+        <article class="proj-card" data-project="aicolossuem">
+            <div class="proj-card__cover">
+                <img src="src/策划与开发经验/AiColossuem/AiColossuem_post.png" alt="AI竞技场" loading="lazy">
+            </div>
+            <div class="proj-card__body">
+                <h3 class="proj-card__title">AI 竞技场</h3>
+                <p class="proj-card__role">策划 · 平台架构设计 · 游戏美术设计 · 用户文档与脚本撰写 · 赛事宣传美术设计</p>
+                <p class="proj-card__intro">AI算法对抗游戏平台，通过Socket实现Unity与外部AI脚本实时互动。配备完整教程与接口脚本，已适配Stablebaselines3强化学习工具包，玩家可零门槛体验智能体对战乐趣。</p>
+                <span class="proj-card__more">查看详情 →</span>
+            </div>
+        </article>
+
+        <!-- BubbleBattleArtist -->
+        <article class="proj-card" data-project="bubblebattle">
+            <div class="proj-card__cover">
+                <img src="src/策划与开发经验/BubbleBattleArtist/BubbleArtist_post.png" alt="泡泡战斗艺术家" loading="lazy">
+            </div>
+            <div class="proj-card__body">
+                <h3 class="proj-card__title">泡泡战斗艺术家</h3>
+                <p class="proj-card__role">策划 · 美术</p>
+                <p class="proj-card__intro">2025 Global Game Jam & 开拓芯参赛作品。2D横版平台跳跃游戏，颠覆传统以快打慢，实现如艺术般优雅的战斗。十余种奇妙生物各有特点，依靠玩家自行探索。</p>
+                <span class="proj-card__more">查看详情 →</span>
+            </div>
+        </article>
+
+        <!-- Live4Burger -->
+        <article class="proj-card" data-project="live4burger">
+            <div class="proj-card__cover">
+                <img src="src/策划与开发经验/Live4Burger/Live2Burger.png" alt="Live4Burger" loading="lazy">
+            </div>
+            <div class="proj-card__body">
+                <h3 class="proj-card__title">Live4Burger</h3>
+                <p class="proj-card__role">独立开发</p>
+                <p class="proj-card__intro">下楼梯 + 策略物资收集。当价值体系崩塌，你是否有勇气在废墟上重建楼阁？包含火焰平台、芝士平台等多种交互机制，音乐与音效设计考究。</p>
+                <span class="proj-card__more">查看详情 →</span>
+            </div>
+        </article>
+
+        <!-- PostTreatment -->
+        <article class="proj-card" data-project="posttreatment">
+            <div class="proj-card__cover">
+                <img src="src/策划与开发经验/PostTreatment/PostTreatment_post.png" alt="一步之遥" loading="lazy">
+            </div>
+            <div class="proj-card__body">
+                <h3 class="proj-card__title">一步之遥</h3>
+                <p class="proj-card__role">策划</p>
+                <p class="proj-card__intro">香港背景叙事驱动刺杀游戏。新颖的感知系统调动多重感官推理目标，战场信息博弈论建模态势，多样化战术风格与数十种道具实现关卡个性化解法。</p>
+                <span class="proj-card__more">查看详情 →</span>
+            </div>
+        </article>
+
+        <!-- StreamGame -->
+        <article class="proj-card" data-project="streamgame">
+            <div class="proj-card__cover">
+                <img src="src/策划与开发经验/StreamGame/StreamGame_post.png" alt="山里老艺人的直播间" loading="lazy">
+            </div>
+            <div class="proj-card__body">
+                <h3 class="proj-card__title">山里老艺人的直播间</h3>
+                <p class="proj-card__role">独立开发</p>
+                <p class="proj-card__intro">模拟直播间，AI主播由大语言模型+VLA驱动。复刻完整直播生态（弹幕、礼物、后台管理），内生规则驱动游戏世界，实验性游戏与商业化的结合尝试。</p>
+                <span class="proj-card__more">查看详情 →</span>
+            </div>
+        </article>
+
+    </div>
+</section>
+
+<!-- Gaming Experience Section -->
+<section id="games" class="games">
+    <h2 class="sec-title">游戏经历</h2>
+
+    <div class="games__grid">
+        <div class="game-cat">
+            <h3 class="game-cat__head">第一人称射击</h3>
+            <ul>
+                <li>CS2 <span>957.7h</span></li>
+                <li>穿越火线 <span>300+h</span></li>
+                <li>战地一 <span>145.2h</span></li>
+                <li>孤岛惊魂3 <span>126.2h</span></li>
+                <li>CS1.6 <span>100+h</span></li>
+            </ul>
+        </div>
+        <div class="game-cat">
+            <h3 class="game-cat__head">开放世界</h3>
+            <ul>
+                <li>我的世界 <span>400+h</span></li>
+                <li>热血无赖 <span>180+h</span></li>
+                <li>GTA4 <span>135h</span></li>
+                <li>僵尸毁灭工程 <span>114.5h</span></li>
+                <li>森林 <span>112.9h</span></li>
+                <li>饥荒 <span>100+h</span></li>
+                <li>看门狗2 <span>60+h</span></li>
+            </ul>
+        </div>
+        <div class="game-cat">
+            <h3 class="game-cat__head">RogueLike</h3>
+            <ul>
+                <li>死亡细胞 <span>66.9h</span></li>
+                <li>地皮街区 <span>51.8h</span></li>
+                <li>终极幸运之塔 <span>35.2h</span></li>
+                <li>柯尔特峡谷 <span>35.1h</span></li>
+                <li>R.E.P.O <span>14.6h</span></li>
+            </ul>
+        </div>
+        <div class="game-cat">
+            <h3 class="game-cat__head">2D横版动作</h3>
+            <ul>
+                <li>DuckGame <span>141h</span></li>
+                <li>誓死坚守 <span>67h</span></li>
+                <li>Shank <span>24.6h</span></li>
+                <li>Shank2 <span>23.7h</span></li>
+                <li>StickFight <span>15.4h</span></li>
+                <li>武装原型 <span>13.3h</span></li>
+            </ul>
+        </div>
+        <div class="game-cat">
+            <h3 class="game-cat__head">ARPG</h3>
+            <ul>
+                <li>超级马里奥N64 <span>150+h</span></li>
+                <li>英勇之地 <span>105.6h</span></li>
+                <li>Overgrowth <span>36h</span></li>
+            </ul>
+        </div>
+        <div class="game-cat game-cat--wide">
+            <h3 class="game-cat__head">更多</h3>
+            <p>胡闹厨房2、星露谷物语、人类一败涂地、战斗方块剧场、城堡破坏者、孤胆枪手、血腥大陆、小白熊历险记、宝石迷阵、重装兵器、超级赚钱大亨、怪怪水族馆、植物大战僵尸以及各种独立游戏、小众冷门佳作、无数Flash小游戏与一众FC游戏</p>
+        </div>
+        <div class="game-cat">
+            <h3 class="game-cat__head">服务器运维</h3>
+            <ul>
+                <li>Minecraft</li>
+                <li>Project Zomboid</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- InfoSec Section -->
+<section id="security" class="security">
+    <h2 class="sec-title">信息安全</h2>
+
+    <div class="security__grid">
+
+        <div class="sec-card">
+            <span class="sec-card__num">01</span>
+            <div>
+                <h3>反作弊 · 客户端逆向</h3>
+                <p>JS 加密逆向、黑盒检测、UA/TTL 指纹绕过经验 → <strong>外挂分析与反作弊规则迭代</strong>。</p>
+            </div>
+        </div>
+
+        <div class="sec-card">
+            <span class="sec-card__num">02</span>
+            <div>
+                <h3>服务器安全 · DDoS 防御</h3>
+                <p>一作论文 <em>CluBox4PDP</em>（在投）基于可编程数据面，DPDK 部署<strong>99.67% 拒绝率</strong> → 大规模在线游戏抗 D 防护。</p>
+            </div>
+        </div>
+
+        <div class="sec-card">
+            <span class="sec-card__num">03</span>
+            <div>
+                <h3>账号安全 · 反黑产</h3>
+                <p>极验四代点选验证码破解、Web 鉴权逆向（PR 已合并）→ <strong>登录鉴权与反批量注册</strong>。</p>
+            </div>
+        </div>
+
+        <div class="sec-card">
+            <span class="sec-card__num">04</span>
+            <div>
+                <h3>AI 安全 · 大模型与智能体</h3>
+                <p>开发过 LLM-Agent 与 VLA-AI 主播，熟悉提示注入/越狱 → <strong>游戏 AI 功能安全审查</strong>。</p>
+            </div>
+        </div>
+
+        <div class="sec-card">
+            <span class="sec-card__num">05</span>
+            <div>
+                <h3>渗透测试</h3>
+                <p>独立挖出某具身智能机器人高危漏洞（已报工信部）→ <strong>游戏客户端与后台安全审计</strong>。</p>
+            </div>
+        </div>
+
+        <div class="sec-card">
+            <span class="sec-card__num">06</span>
+            <div>
+                <h3>竞赛与培训</h3>
+                <p>鹏云杯<strong>个人一等奖</strong>、智能机器人安全赛华东<strong>一等奖</strong>；发起并主持攻防夏令营，任讲师/出题人 → <strong>团队安全文化与人才赋能</strong>。</p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Footer -->
+<footer id="contact" class="footer">
+    <div class="footer__inner">
+        <div class="footer__brand">
+            <span class="footer__sq footer__sq--red"></span>
+            <span class="footer__sq footer__sq--blue"></span>
+            <span class="footer__sq footer__sq--yellow"></span>
+            <span class="footer__name">赵汉卿</span>
+        </div>
+        <div class="footer__links">
+            <a href="mailto:hankzhao1999@163.com">hankzhao1999@163.com</a>
+            <span class="footer__sep">/</span>
+            <a href="tel:15833356058">15833356058</a>
+            <span class="footer__sep">/</span>
+            <span>济南大学 · 计算机科学与技术 · 硕士</span>
+        </div>
+        <p class="footer__copy">&copy; 2026 Hank Zhao — Game Designer</p>
+    </div>
+</footer>
+
+<!-- Project Gallery Modal -->
+<div id="gallery-modal" class="modal">
+    <div class="modal__bg"></div>
+    <div class="modal__box">
+        <button class="modal__x">&times;</button>
+        <div class="modal__body">
+            <div class="modal__media">
+                <div class="media__stage">
+                    <div class="media__main" id="media-main"></div>
+                    <button class="media__arrow media__arrow--prev" id="media-prev" aria-label="上一张">&#8249;</button>
+                    <button class="media__arrow media__arrow--next" id="media-next" aria-label="下一张">&#8250;</button>
+                    <span class="media__caption" id="media-caption"></span>
+                </div>
+                <div class="media__strip" id="media-strip"></div>
+            </div>
+            <div class="modal__text" id="modal-text"></div>
+        </div>
+    </div>
+</div>
+
+<script src="js/main.js"></script>
 </body>
 </html>
